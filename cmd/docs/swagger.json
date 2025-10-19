@@ -1,0 +1,272 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Generate Project Management Tasks from Diagrams",
+    "title": "catalyst.api",
+    "contact": {},
+    "version": "1.0"
+  },
+  "host": "localhost:42069",
+  "basePath": "/",
+  "paths": {
+    "/auth/logout/{provider}": {
+      "get": {
+        "description": "Logs out the currently authenticated user via the configured provider session.",
+        "produces": ["application/json"],
+        "tags": ["auth"],
+        "summary": "Logout user",
+        "responses": {
+          "302": {
+            "description": "Redirect to /",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/{provider}": {
+      "get": {
+        "description": "Begins the OAuth flow with the selected provider or redirects if already authenticated.",
+        "produces": ["application/json"],
+        "tags": ["auth"],
+        "summary": "Start OAuth login",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "OAuth Provider",
+            "name": "provider",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "Redirect to provider login page or front-end",
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "/auth/{provider}/callback": {
+      "get": {
+        "description": "Handle the callback from the OAuth provider and generate a JWT token.",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["auth"],
+        "summary": "OAuth callback",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "OAuth Provider",
+            "name": "provider",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "302": {
+            "description": "Redirect",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{id}": {
+      "get": {
+        "description": "Retrieves a user's detailed profile by their unique ID.",
+        "produces": ["application/json"],
+        "tags": ["users"],
+        "summary": "Get user details by ID",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "User ID",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User object",
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "400": {
+            "description": "Invalid ID",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "description": "Updates the email, name, and mobile number for a given user.",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "tags": ["users"],
+        "summary": "Update user information by ID",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "User ID",
+            "name": "id",
+            "in": "path",
+            "required": true
+          },
+          {
+            "description": "User update payload",
+            "name": "user",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/user.UserUpdateApiDto"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated user object",
+            "schema": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "description": "Deletes the specified user if they exist and can be deleted.",
+        "tags": ["users"],
+        "summary": "Delete a user by ID",
+        "parameters": [
+          {
+            "type": "string",
+            "description": "User ID",
+            "name": "id",
+            "in": "path",
+            "required": true
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content",
+            "schema": {
+              "type": "string"
+            }
+          },
+          "400": {
+            "description": "Invalid ID",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "schema": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "user.UserUpdateApiDto": {
+      "type": "object",
+      "required": ["email", "firstName", "lastName"],
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "mobileNumber": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

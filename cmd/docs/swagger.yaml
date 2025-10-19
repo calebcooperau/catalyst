@@ -1,0 +1,207 @@
+basePath: /
+definitions:
+  user.UserUpdateApiDto:
+    properties:
+      email:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      mobileNumber:
+        type: string
+    required:
+      - email
+      - firstName
+      - lastName
+    type: object
+host: localhost:42069
+info:
+  contact: {}
+  description: Generate Project Management Tasks from Diagrams
+  title: catalyst.api
+  version: "1.0"
+paths:
+  /auth/{provider}:
+    get:
+      description:
+        Begins the OAuth flow with the selected provider or redirects if
+        already authenticated.
+      parameters:
+        - description: OAuth Provider
+          in: path
+          name: provider
+          required: true
+          type: string
+      produces:
+        - application/json
+      responses:
+        "302":
+          description: Redirect to provider login page or front-end
+          schema:
+            type: string
+      summary: Start OAuth login
+      tags:
+        - auth
+  /auth/{provider}/callback:
+    get:
+      consumes:
+        - application/json
+      description:
+        Handle the callback from the OAuth provider and generate a JWT
+        token.
+      parameters:
+        - description: OAuth Provider
+          in: path
+          name: provider
+          required: true
+          type: string
+      produces:
+        - application/json
+      responses:
+        "302":
+          description: Redirect
+          schema:
+            type: string
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: OAuth callback
+      tags:
+        - auth
+  /auth/logout/{provider}:
+    get:
+      description:
+        Logs out the currently authenticated user via the configured provider
+        session.
+      produces:
+        - application/json
+      responses:
+        "302":
+          description: Redirect to /
+          schema:
+            type: string
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Logout user
+      tags:
+        - auth
+  /users/{id}:
+    delete:
+      description: Deletes the specified user if they exist and can be deleted.
+      parameters:
+        - description: User ID
+          in: path
+          name: id
+          required: true
+          type: string
+      responses:
+        "204":
+          description: No Content
+          schema:
+            type: string
+        "400":
+          description: Invalid ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: User not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Delete a user by ID
+      tags:
+        - users
+    get:
+      description: Retrieves a user's detailed profile by their unique ID.
+      parameters:
+        - description: User ID
+          in: path
+          name: id
+          required: true
+          type: string
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: User object
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid ID
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: User not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get user details by ID
+      tags:
+        - users
+    put:
+      consumes:
+        - application/json
+      description: Updates the email, name, and mobile number for a given user.
+      parameters:
+        - description: User ID
+          in: path
+          name: id
+          required: true
+          type: string
+        - description: User update payload
+          in: body
+          name: user
+          required: true
+          schema:
+            $ref: "#/definitions/user.UserUpdateApiDto"
+      produces:
+        - application/json
+      responses:
+        "200":
+          description: Updated user object
+          schema:
+            additionalProperties: true
+            type: object
+        "400":
+          description: Invalid input
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "404":
+          description: User not found
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "500":
+          description: Internal server error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Update user information by ID
+      tags:
+        - users
+swagger: "2.0"

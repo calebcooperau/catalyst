@@ -1,0 +1,12 @@
+test_db:
+  container_name: "catalyst.apiDB_test"
+  image: postgres:17-alpine
+  volumes:
+    - "./database/postgres--test-data:/var/lib/postgresql/data:rw"
+  ports:
+    - "5433:5432"
+  environment:
+    POSTGRES_DB: "postgres"
+    POSTGRES_USER: "postgres"
+    POSTGRES_PASSWORD: "postgres"
+  restart: unless-stopped

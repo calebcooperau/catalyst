@@ -1,0 +1,68 @@
+version: "2"
+
+servers:
+  - engine: "postgresql"
+    uri: "postgresql://postgres:postgres@localhost:5432/postgres"
+sql:
+  ## Authentication Domain
+  - name: "authentication"
+    schema: "../../migrations"
+    engine: "postgresql"
+    queries: "../domain/authentication/sql_queries/*.sql"
+    database:
+      managed: true
+    gen:
+      go:
+        package: "data"
+        sql_package: "pgx/v5"
+        out: "../domain/authentication/data"
+        emit_all_enum_values: true
+        emit_enum_valid_method: true
+        emit_pointers_for_null_types: true
+        overrides:
+          - db_type: "uuid"
+            go_type:
+              import: "github.com/google/uuid"
+              type: "UUID"
+
+  ## User Domain
+  - name: "user"
+    schema: "../../migrations"
+    engine: "postgresql"
+    queries: "../domain/user/sql_queries/*.sql"
+    database:
+      managed: true
+    gen:
+      go:
+        package: "data"
+        sql_package: "pgx/v5"
+        out: "../domain/user/data"
+        emit_all_enum_values: true
+        emit_enum_valid_method: true
+        emit_pointers_for_null_types: true
+        overrides:
+          - db_type: "uuid"
+            go_type:
+              import: "github.com/google/uuid"
+              type: "UUID"
+
+  ## Project Domain
+  - name: "project"
+    schema: "../../migrations"
+    engine: "postgresql"
+    queries: "../domain/project/sql_queries/*.sql"
+    database:
+      managed: true
+    gen:
+      go:
+        package: "data"
+        sql_package: "pgx/v5"
+        out: "../domain/project/data"
+        emit_all_enum_values: true
+        emit_enum_valid_method: true
+        emit_pointers_for_null_types: true
+        overrides:
+          - db_type: "uuid"
+            go_type:
+              import: "github.com/google/uuid"
+              type: "UUID"

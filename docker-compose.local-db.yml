@@ -1,0 +1,16 @@
+## local database docker
+services:
+  db:
+    container_name: "catalyst.api_DB_local"
+    image: postgres:17-alpine
+    volumes:
+      - "pgdata:/var/lib/postgresql/data"
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: "postgres"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+    restart: unless-stopped
+volumes:
+  pgdata:
